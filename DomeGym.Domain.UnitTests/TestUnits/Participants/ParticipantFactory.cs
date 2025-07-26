@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DomeGym.Domain.UnitTests.TestUnits.Participants
+﻿namespace DomeGym.Domain.UnitTests.TestUnits.Participants;
+public static class ParticipantFactory
 {
-    public static class ParticipantFactory
+    public static Participant CreateParticipant(Guid? id = null)
     {
-        //public static Participant CreateParticipant(Guid id = null)
-        //{
-        //    return new Participant(
-        //        userId: ,
-
-        //        id: id??  );
-        //}
+        return new Participant(
+            userId: TestConstants.Constants.User.Id,
+            id: id ?? TestConstants.Constants.Participant.Id);
     }
 }
