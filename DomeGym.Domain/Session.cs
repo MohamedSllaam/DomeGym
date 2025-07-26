@@ -28,6 +28,13 @@ public class Session
         Id = id ?? Guid.NewGuid();
     }
 
+    public Session(int maxParticipants, Guid trainerId, Guid? id = null)
+    {
+        _maxParticipants = maxParticipants;
+        _trainerId = trainerId;
+        Id = id ?? Guid.NewGuid();
+    }
+
     public ErrorOr<Success> CancelReservation(Participant participant, IDateTimeProvider dateTimeProvider)
     {
         if (IsTooCloseToSession(dateTimeProvider.UtcNow))
