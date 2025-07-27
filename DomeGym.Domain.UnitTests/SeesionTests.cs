@@ -1,6 +1,9 @@
-﻿using DomeGym.Domain.UnitTests.TestUnits.Participants;
+﻿using DomeGym.Domain.UnitTests.TestConstants;
+using DomeGym.Domain.UnitTests.TestUnits;
+using DomeGym.Domain.UnitTests.TestUnits.Participants;
 using DomeGym.Domain.UnitTests.TestUnits.Sessions;
 using FluentAssertions;
+using FluentAssertions.Common;
 namespace DomeGym.UnitTests;
 
 public class SeesionTests
@@ -20,5 +23,29 @@ public class SeesionTests
         ///participant 2 reservation Failed
         action.Should().Throw<InvalidOperationException>();
 
+    }
+
+    [Fact]
+    public void CancelReservation_WhenCancellationIsToolCloseToSessio_ShouldFailCancellation()
+    {
+        //Arrange 
+        var session = SessionFactory.CreateSession
+            (date: Constants.Session.Date,
+              time: Constants.Session.Time
+            );
+        var participant= ParticipantFactory
+            .CreateParticipant();
+
+        session.ReserveSpot(participant);
+
+        var cancellationDateTime = Constants.Session.Date.ToDateTime(TimeOnly.MinValue);
+
+        var action = () => session.CancelReservation(
+            participant,
+            new TestDateTimeProvider(fixedDateTime: cancellationDateTime)
+            );
+
+        // Assert
+        action.Should().ThrowExactly<Exception>();
     }
 }
