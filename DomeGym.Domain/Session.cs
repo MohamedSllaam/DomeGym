@@ -61,7 +61,7 @@ public class Session
     {
         if (_participantIds.Count >= _maxParticipants)
         {
-            return SessionErrors.CannotHaveMoreReservationsThanParticipants;
+             return SessionErrors.CannotHaveMoreReservationsThanParticipants;
         }
 
         if (_participantIds.Contains(participant.Id))
