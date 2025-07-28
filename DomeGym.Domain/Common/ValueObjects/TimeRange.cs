@@ -2,7 +2,7 @@ using DomeGym.Domain.Common;
 using ErrorOr;
 using Throw;
 
-namespace DomeGym.Domain;
+namespace DomeGym.Domain.Common.ValueObjects;
 
 public class TimeRange : ValueObject
 {

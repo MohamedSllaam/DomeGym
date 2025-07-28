@@ -1,15 +1,18 @@
+using DomeGym.Domain.Common;
+using DomeGym.Domain.Common.Inrerfaces;
+using DomeGym.Domain.Common.ValueObjects;
+using DomeGym.Domain.ParticipantAggregate;
 using ErrorOr;
 
-namespace DomeGym.Domain;
+namespace DomeGym.Domain.SessionAggregate;
 
-public class Session
+public class Session :AggregateRoot
 {
     private readonly Guid _trainerId;
-    private readonly List<Guid> _participantIds = new();
+    private readonly List<Reservation> _reservations = new();
     private readonly int _maxParticipants;
 
-    public Guid Id { get; }
-
+ 
     public DateOnly Date { get; }
 
     public TimeRange Time { get; }
@@ -20,20 +23,15 @@ public class Session
         int maxParticipants,
         Guid trainerId,
         Guid? id = null)
+        :base(id ?? Guid.NewGuid())
     {
         Date = date;
         Time = time;
         _maxParticipants = maxParticipants;
         _trainerId = trainerId;
-        Id = id ?? Guid.NewGuid();
     }
 
-    public Session(int maxParticipants, Guid trainerId, Guid? id = null)
-    {
-        _maxParticipants = maxParticipants;
-        _trainerId = trainerId;
-        Id = id ?? Guid.NewGuid();
-    }
+   
 
     public ErrorOr<Success> CancelReservation(Participant participant, IDateTimeProvider dateTimeProvider)
     {
@@ -41,8 +39,11 @@ public class Session
         {
             return SessionErrors.CannotCancelReservationTooCloseToSession;
         }
-
-        if (!_participantIds.Remove(participant.Id))
+        var reservation = _reservations.Find(reservation => reservation.ParticipantId == participant.Id);
+       if(reservation is null)
+            return Error.NotFound(description: "Participant not found");
+        
+        if (!_reservations.Remove(reservation))
         {
             return Error.NotFound(description: "Participant not found");
         }
@@ -59,17 +60,19 @@ public class Session
 
     public ErrorOr<Success> ReserveSpot(Participant participant)
     {
-        if (_participantIds.Count >= _maxParticipants)
+        if (_reservations.Count >= _maxParticipants)
         {
              return SessionErrors.CannotHaveMoreReservationsThanParticipants;
         }
 
-        if (_participantIds.Contains(participant.Id))
+        //if (_participantIds.Contains(participant.Id))
+        if (_reservations.Any(res => res.ParticipantId == participant.Id))
         {
             return Error.Conflict(description: "Participants cannot reserve twice to the same session");
         }
 
-        _participantIds.Add(participant.Id);
+        var reservation = new Reservation(participant.Id);
+        _reservations.Add(reservation);
 
         return Result.Success;
     }

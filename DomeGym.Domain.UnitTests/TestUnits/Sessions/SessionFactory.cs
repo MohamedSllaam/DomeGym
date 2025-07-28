@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine;
+﻿using DomeGym.Domain.Common.ValueObjects;
+using DomeGym.Domain.SessionAggregate;
+using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine;
 namespace DomeGym.Domain.UnitTests.TestUnits.Sessions;
 public static class SessionFactory
 {
