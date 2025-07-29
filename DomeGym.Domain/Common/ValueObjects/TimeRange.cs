@@ -19,10 +19,18 @@ public class TimeRange : ValueObject
     {
         if (start.Date != end.Date || start >= end)
         {
-            return Error.Validation();
+            return Error.Validation(description: "Start and end times must be on the same day.");
+
         }
 
-        return new TimeRange(TimeOnly.FromDateTime(start), TimeOnly.FromDateTime(end));
+        if (start >= end)
+        {
+            return Error.Validation(description:"End time must be greater than start time");
+        }
+
+        return new TimeRange(
+                 start: TimeOnly.FromDateTime(start),
+                 end  : TimeOnly.FromDateTime(end));
     }
 
     public bool OverlapsWith(TimeRange other)
